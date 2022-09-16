@@ -18,7 +18,10 @@
         TeamOutlined,
         ShopOutlined,
     } from '@ant-design/icons-vue';
+    import {useAsideMenuStore} from '@/stores/asidemenu'
     const selectedKeys=ref<string[]>(['4'])
+    const asidemenu=useAsideMenuStore()
+    // console.log(asidemenu.menuList)
 </script>
 <template>
     <div class="logo" />

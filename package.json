@@ -11,6 +11,8 @@
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
     "ant-design-vue": "^3.2.12",
+    "axios": "^0.27.2",
+    "mockjs": "^1.1.0",
     "pinia": "^2.0.21",
     "vue": "^3.2.38",
     "vue-router": "^4.1.5"
