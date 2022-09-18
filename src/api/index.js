@@ -7,10 +7,10 @@ export const getRoleList=(data)=>{
     }
     return request(obj)
 }
-export const dd=(data)=>{
+export const doLogin=(data)=>{
     const obj={
-        url:'/aacc/',
-        method:'get',
+        url:'/user/login/',
+        method:'post',
         data
     }
     return request(obj)

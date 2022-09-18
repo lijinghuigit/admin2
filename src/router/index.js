@@ -16,7 +16,8 @@ export const constantRoutes=[
     component: Layout,
     meta:{
       title:'首页',
-      icon:'icon-comments'
+      icon:'icon-comments',
+      single:true
     },
     children:[
       {
@@ -37,11 +38,13 @@ export const constantRoutes=[
       title:'登陆',
       icon:'icon-youxiang'
     },
+    hidden:true,
     component:()=>import('../views/login.vue')
   },
   {
     path:'/:pathMatch(.*)*',
     name:'404',
+    hidden:true,
     component:()=>import('../views/error/404.vue')
   }
 ]
@@ -72,6 +75,7 @@ export const asyncRoutes=[
           title:'产品分类',
           icon:'icon-searchcart'
         },
+        
       },
     ]
   }

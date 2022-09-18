@@ -1,17 +1,16 @@
 import router from '@/router'
 import {useAsideMenuStore} from '@/stores/asidemenu'
-
+import {useInforStore} from '@/stores/userinfor.js'
+import { storeToRefs } from 'pinia'
 router.beforeEach(async (to,next)=>{
     const asidemenu=useAsideMenuStore()
-    const token=localStorage.getItem('token')
+    const {userInfor}=storeToRefs(useInforStore())
+    console.log(userInfor.value.token,to.path)
     document.title=to.meta.title
-    await asidemenu.asyncGetMenu({token})
-    console.log('你先吗')
-    return 
     if(to.path === '/login' || to.path === '/404'|| to.path === '/403'){
         return true
     }else{
-        if(!token){
+        if(!userInfor.value.token){
             return {
                 name:'login'
             }
@@ -19,8 +18,15 @@ router.beforeEach(async (to,next)=>{
             // 获取侧边menu
             if(asidemenu.menuList.length==0){
                 // 获取路由信息
-                await asidemenu.asyncGetMenu({token})
-                console.log('你先吗')
+                const accessdRoutes= await asidemenu.asyncGetMenu({token:userInfor.value.token})
+                console.log('你先吗',accessdRoutes)
+                // 动态添加路由
+                accessdRoutes.forEach((item)=>{
+                    router.addRoute(item)
+                })
+                router.push({path:to.path})
+                // 或者触发重定向
+                // return to.fullPath
             }else{
                 return true
             }
