@@ -7,33 +7,37 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <script lang="ts" setup>
-    import { defineComponent, ref } from 'vue';
+    import {reactive, ref } from 'vue';
     import {
         UserOutlined,
     } from '@ant-design/icons-vue';
     import SubMenu from './SubMenu.vue'
     import {useAsideMenuStore} from '@/stores/asidemenu'
     import {useRouter,useRoute} from 'vue-router'
-    import {computed} from 'vue'
-    const asidemenu=useAsideMenuStore()
+    import {storeToRefs} from 'pinia'
+    const asidemenu=storeToRefs(useAsideMenuStore())
+    console.log(asidemenu)
     const router=useRouter()
     const route=useRoute()
     const goRoute=(data:any)=>{
+      console.log(data)
       router.push({
         name:data.name
       })
     }
-    const onRoutes=computed(()=>{
-      return [route.name]
-    })
+    const { matched } = router.currentRoute.value
+    const openKeysList = matched.map((item) => item.name)
+    const openKeys=ref(openKeysList)
 </script>
 <template>
     <div class="logo" />
-    <a-menu v-model:selectedKeys="onRoutes" theme="dark" mode="inline">
-      <template v-for="item in asidemenu.menuList" :key="item.name">
+    <a-menu v-model:selectedKeys="asidemenu.currentMenu.value" 
+    theme="dark" mode="inline"
+    v-model:openKeys="openKeys">
+      <template v-for="item in asidemenu.menuList.value" :key="item.name">
           <template v-if="!item.children">
             <a-menu-item :key="item.name" @click="goRoute(item)">
-              <user-outlined />
+              <icon-font :type="item.meta.icon" />
               <span class="nav-text">{{item.meta.title}}</span>
             </a-menu-item>
           </template>

@@ -7,12 +7,15 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref,onMounted } from 'vue';
   import Header  from './components/Header.vue';
   import Footer  from './components/Footer.vue';
   import AsideMenu  from './components/AsideMenu.vue';
   import VTags  from './components/VTags.vue';
   const collapsed= ref<boolean>(false)
+  onMounted(()=>{
+    collapsed.value=false
+  })
 </script>
 <template>
   <a-layout has-sider style="height: 100%;">

@@ -16,6 +16,7 @@ export const useAsideMenuStore = defineStore('Asidemenu', {
     return {
         menuList: [],
         routerList:[],
+        currentMenu:[]
     }
   },
   actions: {
@@ -44,6 +45,10 @@ export const useAsideMenuStore = defineStore('Asidemenu', {
     setRouter(data){
         console.log(data)
         this.routerList=data
+    },
+    setCurrentRoute(data){
+      this.currentMenu=[]
+      this.currentMenu.push(data)
     }
   },
 })

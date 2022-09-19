@@ -8,10 +8,11 @@
  */
 import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '../views/Layout/Layout.vue'
+import EmptyLayout from '@/views/empty_layout/index.vue'
 export const constantRoutes=[
   {
     path: '/',
-    name: 'Layout',
+    name: 'Index',
     redirect:'/index',
     component: Layout,
     meta:{
@@ -22,7 +23,7 @@ export const constantRoutes=[
     children:[
       {
         path: '/index',
-        name: 'index',
+        name: 'Index',
         component: ()=>import('../views/index.vue'),
         meta:{
           title:'首页',
@@ -75,8 +76,58 @@ export const asyncRoutes=[
           title:'产品分类',
           icon:'icon-searchcart'
         },
-        
       },
+    ]
+  },
+  {
+    path:'/order',
+    component:Layout,
+    name:'order-manage',
+    redirect:'/order/list',
+    meta:{
+      title: '订单管理',
+      icon: 'icon-cart-Empty'
+    },
+    children: [
+      {
+        path: '/order/list',
+        name: 'order-list',
+        component: () => import('@/views/order/list/index.vue'),
+        meta: {
+          title: '订单列表',
+          icon: 'icon-Exportservices'
+        }
+      },
+      {
+        path:'/order/product',
+        component:EmptyLayout,
+        name:'goods',
+        meta: {
+          title: '货物管理',
+          icon: 'icon-searchcart'
+        },
+        redirect: '/order/good/list',
+        children: [
+          {
+            path: '/order/good/list',
+            name: 'goods-list',
+            component: () => import('@/views/order/good/list/index.vue'),
+            meta: {
+              title: '货物列表',
+              icon: 'icon-apparel'
+            }
+          },
+          {
+            path: '/order/good/check',
+            name: 'goods-classify',
+            component: () => import('@/views/order/good/check/index.vue'),
+            meta: {
+              title: '退货管理',
+              icon: 'icon-add-account'
+            }
+          }
+        ]
+      }
     ]
   }
 ]
