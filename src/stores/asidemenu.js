@@ -14,7 +14,8 @@ import {recursionRouter,setSingleItem} from '@/utils/recursion-router'
 export const useAsideMenuStore = defineStore('Asidemenu', {
   state: () => {
     return {
-        menuList: []
+        menuList: [],
+        routerList:[],
     }
   },
   actions: {
@@ -34,12 +35,15 @@ export const useAsideMenuStore = defineStore('Asidemenu', {
           const allRouterList=menu.filter(
             (item)=>!item.hidden
           )
-          
           const currentMenu=setSingleItem(allRouterList,[])
           console.log(currentMenu)
           this.menuList=currentMenu
           return data 
         }
     },
+    setRouter(data){
+        console.log(data)
+        this.routerList=data
+    }
   },
 })

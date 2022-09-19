@@ -13,19 +13,23 @@
     } from '@ant-design/icons-vue';
     import SubMenu from './SubMenu.vue'
     import {useAsideMenuStore} from '@/stores/asidemenu'
-    import {useRouter} from 'vue-router'
-    const selectedKeys=ref<string[]>(['4'])
+    import {useRouter,useRoute} from 'vue-router'
+    import {computed} from 'vue'
     const asidemenu=useAsideMenuStore()
     const router=useRouter()
+    const route=useRoute()
     const goRoute=(data:any)=>{
       router.push({
         name:data.name
       })
     }
+    const onRoutes=computed(()=>{
+      return [route.name]
+    })
 </script>
 <template>
     <div class="logo" />
-    <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
+    <a-menu v-model:selectedKeys="onRoutes" theme="dark" mode="inline">
       <template v-for="item in asidemenu.menuList" :key="item.name">
           <template v-if="!item.children">
             <a-menu-item :key="item.name" @click="goRoute(item)">

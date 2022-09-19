@@ -20,6 +20,7 @@ Mock.mock('/user/info/', 'get', (res) => {
             data:{}
         }
     }
+    console.log(userInfor.value.token)
     if(userInfor.value.token==='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'){//管理员
         permission=["index","order-manage","order-list","product-manage","product-list","review-manage","return-goods","goods","goods-list","goods-classify","permission","user-manage","role-manage","menu-manage"]
     }else{
@@ -32,11 +33,12 @@ Mock.mock('/user/info/', 'get', (res) => {
             name:"admin",
             roles:["admin"],
             data:permission
-        }}
+        }
+    }
 })
 Mock.mock('/user/login/', 'post', (res) => {
     res=JSON.parse(res.body)
-    console.log(res)
+    console.log(res.name)
     let token=''
     if(res.name==='admin'){
         token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'

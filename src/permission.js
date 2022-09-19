@@ -33,3 +33,9 @@ router.beforeEach(async (to,next)=>{
         }
     }
 })
+// router.afterEach((to,from,failure)=>{
+//     console.log(to)
+//     const asidemenu=useAsideMenuStore()
+//     const routerList=to.matched
+//     asidemenu.setRouter(routerList)
+// })
