@@ -53,6 +53,7 @@ export const asyncRoutes=[
   {
     path:'/product',
     component:Layout,
+    redirect: '/product/list',
     name:'product-manage',
     meta:{
       title:'产品管理',
