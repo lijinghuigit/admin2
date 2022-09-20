@@ -7,20 +7,16 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <script lang="ts" setup>
-    import {reactive, ref } from 'vue';
-    import {
-        UserOutlined,
-    } from '@ant-design/icons-vue';
+    import {reactive, ref,computed } from 'vue';
     import SubMenu from './SubMenu.vue'
     import {useAsideMenuStore} from '@/stores/asidemenu'
     import {useRouter,useRoute} from 'vue-router'
     import {storeToRefs} from 'pinia'
-    const asidemenu=storeToRefs(useAsideMenuStore())
-    console.log(asidemenu)
+    const {menuList,currentMenu}=storeToRefs(useAsideMenuStore())
+    console.log(menuList.value,currentMenu)
     const router=useRouter()
     const route=useRoute()
     const goRoute=(data:any)=>{
-      console.log(data)
       router.push({
         name:data.name
       })
@@ -31,10 +27,10 @@
 </script>
 <template>
     <div class="logo" />
-    <a-menu v-model:selectedKeys="asidemenu.currentMenu.value" 
+    <a-menu v-model:selectedKeys="currentMenu" 
     theme="dark" mode="inline"
-    v-model:openKeys="openKeys">
-      <template v-for="item in asidemenu.menuList.value" :key="item.name">
+    v-model:openKeys="openKeys"> 
+      <template v-for="item in menuList" :key="item.name">
           <template v-if="!item.children">
             <a-menu-item :key="item.name" @click="goRoute(item)">
               <icon-font :type="item.meta.icon" />
@@ -42,7 +38,7 @@
             </a-menu-item>
           </template>
           <template v-else>
-              <sub-menu :menu-info='item' @propsClick="goRoute" :key="item.name"/>
+              <sub-menu :menu-info='item' @propsClick="goRoute" :key="item.name" />
           </template>
       </template>  
     </a-menu>

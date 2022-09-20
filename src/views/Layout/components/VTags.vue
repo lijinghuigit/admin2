@@ -1,7 +1,7 @@
 <template>
   <div class="t_container">
       <a-breadcrumb class="breadcrumb">
-        <template v-for="route in tagList" :key="route.name">
+        <template v-for="route in routerList" :key="route.name">
           <a-breadcrumb-item 
             v-if="!route.meta.single">
             <!-- <router-link :to="route.path"> -->
@@ -22,14 +22,15 @@
   const router=useRouter()
   const route = useRoute()
   const asidemenu=useAsideMenuStore()
-  const tagList=storeToRefs(asidemenu).routerList
+  const {routerList}=storeToRefs(asidemenu)
   const routeChange=()=>{ 
-    const {fullpath,meta,name,path,matched} =router.currentRoute.value
+    const {fullPath,meta,name,path,matched} =router.currentRoute.value
+    // console.log(router.currentRoute.value,fullPath,meta,name,path,matched)
     asidemenu.setRouter(matched)
     asidemenu.setCurrentRoute(name)
   }
   watch(
-    () => route.fullPath,
+    () => route.path,
     (count, prevCount) => {
       routeChange()
     }

@@ -1,25 +1,23 @@
-<script setup>
+<script setup lang="ts">
     import { MailOutlined} from '@ant-design/icons-vue';
     defineProps({
         menuInfo:{
             type:Object,
-            default(rawProps) {
-                // console.log(rawProps)
+            default(rawProps:any) {
                 return {}
             },
-            validator(value) {
-                // console.log(value)
-                return true
-            }
+            // validator(value) {
+            //     return true
+            // }
         },
     })
     const emit = defineEmits(['propsClick'])
-    const goRoute=(data)=>{
+    const goRoute=(data:any)=>{
         emit('propsClick',data)
     }
 </script>
 <template>
-    <a-sub-menu :key="menuInfo.key" v-bind="$attrs">
+    <a-sub-menu :key="menuInfo.name">
         <template #icon>
             <icon-font :type="menuInfo.meta.icon" />
         </template>

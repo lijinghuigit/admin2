@@ -27,7 +27,7 @@
   import type { Rule } from 'ant-design-vue/es/form';
   import { defineComponent, reactive, ref } from 'vue';
   import type { FormInstance } from 'ant-design-vue';
-  import {doLogin} from '@/api/index';
+  import {doLogin} from '@/api/index.js';
   import { message } from 'ant-design-vue';
   import {useRouter} from 'vue-router'
   import {useInforStore} from '@/stores/userinfor.js'
