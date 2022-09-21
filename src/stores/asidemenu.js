@@ -18,6 +18,7 @@ export const useAsideMenuStore = defineStore('Asidemenu', {
         routerList:[],
         currentMenu:[],
         tagList:[],
+        testPrimary:'基础数据类型'
     }
   },
   actions: {

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-    import { MailOutlined} from '@ant-design/icons-vue';
     defineProps({
         menuInfo:{
             type:Object,
@@ -25,10 +24,10 @@
         <template v-for="item in menuInfo.children" :key="item.name">
             <template v-if="!item.children">
                 <a-menu-item :key="item.name"
-                @click="goRoute(item)">
-                <icon-font :type="item.meta.icon" />
-                {{item.meta.title}}
-            </a-menu-item>
+                    @click="goRoute(item)">
+                    <icon-font :type="item.meta.icon" />
+                    {{item.meta.title}}
+                </a-menu-item>
            </template> 
            <template v-else>
                 <sub-menu :menu-info='item' :key="item.name"
