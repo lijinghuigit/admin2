@@ -12,6 +12,7 @@
     "@ant-design/icons-vue": "^6.1.0",
     "ant-design-vue": "^3.2.12",
     "axios": "^0.27.2",
+    "echarts": "^5.3.3",
     "mockjs": "^1.1.0",
     "pinia": "^2.0.21",
     "vue": "^3.2.38",

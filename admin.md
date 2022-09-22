@@ -8,166 +8,6 @@ vue3+axios+vuex+vue-router+antdesign
 
 
 
-### 1 左侧菜单的渲染以路由为基准;
-
->  
-
-### 2 页面的搭建：
-
-antdesign搭建的；
-
-左侧menu，右侧：header，content，footer；
-
-所以首页就是layout，唯一变化的是content；因此在content就是`<router-view />`,作为layout的子路由进行展示的；因此凡是layout这种布局的，其他路由都是为layout路由的子路由；
-
-### 3 面包屑随路由变化：
-
-在面包屑组件中，watch路由的变化，以及onMounted中获取路由的相关信息；
-
-通常面包屑会是数组形式，所以在对面包屑进行渲染的时候，要判断已存在的面包屑数组中是否存在当前路由，存在则插入，不存在则不插入；
-
-**关闭某个路由时：**
-
-1 判断整个面包屑数组是否<=1，如果是，则不做处理；
-
-2 否则的话，将该路由从数组中删除；
-
-且将要删除的路由的index，从数组中找出，获取到要删除的路由上一个路由，并router.push；
-
-### 4 `全局数据请求拦截处理及loading`
-
-1 创建axios实例及拦截器
-
-```js
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
-import { getLocal } from '@/utils'
-import { message } from 'ant-design-vue'
-const baseURL = process.env.NODE_ENV === 'production' ? '/' : '/api'
-//创建axios实例
-const service = axios.create({
-  baseURL: baseURL, // api的base_url
-  timeout: 200000, // 请求超时时间
-  withCredentials: true, // 选项表明了是否是跨域请求
-  validateStatus (status: number) {
-    switch (status) {
-      case 400:
-        message.error('请求出错')
-        break
-      case 401:
-        message.warning('授权失败，请重新登录')
-        localStorage.removeItem('token')
-        setTimeout(() => {
-          window.location.reload()
-        }, 1000)
-        break
-      case 403:
-        message.warning({
-          message: '拒绝访问'
-        })
-        break
-      case 404:
-        message.warning({
-          message: '请求错误,未找到该资源'
-        })
-        break
-      case 500:
-        message.warning({
-          message: '服务端错误'
-        })
-        break
-    }
-    return status >= 200 && status < 300
-  }
-})
-
-//请求拦截
-service.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
-    // 请求头添加token
-    const token = getLocal('token')
-    if (token) {
-        //请求头添加token
-      config.headers.Authorization = `Bearer ${token}`
-    }
-    const flag =
-      (config.data && config.data.loading !== false) ||
-      (config.params && config.params.loading !== false)
-    if (flag) {// 添加loading
-      let loading: any = undefined
-      loading = document.getElementById('ajaxLoading')
-      loading.style.display = 'block'
-    }
-    return config
-  },
-  (err: any) => {
-    console.log('请求失败')
-    return Promise.reject(err)
-  }
-)
-
-//响应拦截
-service.interceptors.response.use(
-  (response: AxiosResponse) => {
-    const res = response.data
-    // 清除loading
-    const ele: any = document.getElementById('ajaxLoading')
-    ele.style.display = 'none'
-    switch (res.code) {
-      case 1:
-        return res
-      case 401:
-        message.error(res.message)
-        return Promise.reject('error')
-      default:
-        message.error(res.message)
-        return Promise.reject('error')
-    }
-  },
-  (error: { message: any }) => {
-    const ele: any = document.getElementById('ajaxLoading')
-    ele.style.display = 'none'
-    console.log(error.message)
-    // 抛出错误
-    return Promise.reject(error)
-  }
-)
-export default service
-```
-
-api
-
-```js
-import request from '@/utils/axios'
-import { AxiosRequestConfig } from 'axios'
-
-export const getRoleList = () => {
-    const obj:AxiosRequestConfig = {
-        url:'/user/info',
-        method:'get'
-    }
-  return request(obj)
-}
-
-export const doLogin = (data:any) => {
-    const obj:AxiosRequestConfig = {
-        url:'/user/login',
-        method:'post',
-        data
-    }
-  return request(obj)
-}
-
-```
-
-数据请求
-
-```js
-import { getRoleList } from '@/api'
-const res = await getRoleList()
-```
-
-
-
 ##  一、 vue3+elementplus搭建后台；
 
 项目地址：https://github.com/lin-xin/vue-manage-system
@@ -572,6 +412,8 @@ vue3.0+ant design Vue+axios+vue Router+pinia+echarts+core-js;
 
 #### 2 路由的编写：
 
+一、第一种方式：
+
 1 整个路由的展示都会在App.vue填的RouterView的位置展示；
 
 2 子路由都会在其父路由的RouterView位置处展示的；所以首页搭建好基本结构，然后将需要路由组件渲染的路由写成首页的子路由；当然不需要再首页中展示的，例如login路由与index同级；
@@ -605,19 +447,67 @@ vue3.0+ant design Vue+axios+vue Router+pinia+echarts+core-js;
   },
 ```
 
+第二种方式：
 
+动态路由的编写：
 
+直接写二级路由，不写一级路由，最后在处理动态路由时，将动态路由添加到一级路由下就行；
 
+这种方式跟第一种方式不同的是，动态路由编写时，加上了一级路由；
 
-
+所以不同的编写，数据的处理都是不同的，但最终的结果就是动态路由的渲染也是在一级路由的子路由下；
 
 
 
 ### 4 侧边栏
 
+侧边栏的处理主要涉及到子路由（children）的问题，
 
+通过对children的遍历来展示子路由；
 
+```js
+// AsideMenu.vue
+<a-menu v-model:selectedKeys="currentMenu" 
+    theme="dark" mode="inline"
+    v-model:openKeys="openKeys"> 
+      <template v-for="item in menuList" :key="item.name">
+          <template v-if="!item.children">
+            <a-menu-item :key="item.name" @click="goRoute(item)">
+              <icon-font :type="item.meta.icon" />
+              <span class="nav-text">{{item.meta.title}}</span>
+            </a-menu-item>
+          </template>
+          <template v-else>
+              <sub-menu :menu-info='item' @propsClick="goRoute" :key="item.name" />
+          </template>
+      </template>  
+    </a-menu>
+```
 
+```js
+//SubMenu.vue
+<a-sub-menu :key="menuInfo.name">
+        <template #icon>
+            <icon-font :type="menuInfo.meta.icon" />
+        </template>
+        <template #title>{{menuInfo.meta.title}}</template>
+        <template v-for="item in menuInfo.children" :key="item.name">
+            <template v-if="!item.children">
+                <a-menu-item :key="item.name"
+                    @click="goRoute(item)">
+                    <icon-font :type="item.meta.icon" />
+                    {{item.meta.title}}
+                </a-menu-item>
+           </template> 
+           <template v-else>
+                <sub-menu :menu-info='item' :key="item.name"
+                @propsClick="goRoute"/>
+            </template>
+        </template>
+    </a-sub-menu>
+```
+
+这里要注意的是，子组件是可以自身复用的；函数也是一样，可以调用自身的；
 
 
 
@@ -625,7 +515,157 @@ vue3.0+ant design Vue+axios+vue Router+pinia+echarts+core-js;
 
 https://github.com/umijs/babel-plugin-import
 
+### 6 面包屑
+
+在面包屑组件中，watch路由的变化，以及onMounted中获取路由的相关信息；
+
+通常面包屑会是数组形式，所以在对面包屑进行渲染的时候，要判断已存在的面包屑数组中是否存在当前路由，存在则插入，不存在则不插入；
+
+**关闭某个路由时：**
+
+1 判断整个面包屑数组是否<=1，如果是，则不做处理；
+
+2 否则的话，将该路由从数组中删除；
+
+且将要删除的路由的index，从数组中找出，获取到要删除的路由上一个路由，并router.push；
+
+### 7 全局数据请求拦截处理及loading
+
+1 创建axios实例及拦截器
+
+```js
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { getLocal } from '@/utils'
+import { message } from 'ant-design-vue'
+const baseURL = process.env.NODE_ENV === 'production' ? '/' : '/api'
+//创建axios实例
+const service = axios.create({
+  baseURL: baseURL, // api的base_url
+  timeout: 200000, // 请求超时时间
+  withCredentials: true, // 选项表明了是否是跨域请求
+  validateStatus (status: number) {
+    switch (status) {
+      case 400:
+        message.error('请求出错')
+        break
+      case 401:
+        message.warning('授权失败，请重新登录')
+        localStorage.removeItem('token')
+        setTimeout(() => {
+          window.location.reload()
+        }, 1000)
+        break
+      case 403:
+        message.warning({
+          message: '拒绝访问'
+        })
+        break
+      case 404:
+        message.warning({
+          message: '请求错误,未找到该资源'
+        })
+        break
+      case 500:
+        message.warning({
+          message: '服务端错误'
+        })
+        break
+    }
+    return status >= 200 && status < 300
+  }
+})
+
+//请求拦截
+service.interceptors.request.use(
+  (config: AxiosRequestConfig) => {
+    // 请求头添加token
+    const token = getLocal('token')
+    if (token) {
+        //请求头添加token
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    const flag =
+      (config.data && config.data.loading !== false) ||
+      (config.params && config.params.loading !== false)
+    if (flag) {// 添加loading
+      let loading: any = undefined
+      loading = document.getElementById('ajaxLoading')
+      loading.style.display = 'block'
+    }
+    return config
+  },
+  (err: any) => {
+    console.log('请求失败')
+    return Promise.reject(err)
+  }
+)
+
+//响应拦截
+service.interceptors.response.use(
+  (response: AxiosResponse) => {
+    const res = response.data
+    // 清除loading
+    const ele: any = document.getElementById('ajaxLoading')
+    ele.style.display = 'none'
+    switch (res.code) {
+      case 1:
+        return res
+      case 401:
+        message.error(res.message)
+        return Promise.reject('error')
+      default:
+        message.error(res.message)
+        return Promise.reject('error')
+    }
+  },
+  (error: { message: any }) => {
+    const ele: any = document.getElementById('ajaxLoading')
+    ele.style.display = 'none'
+    console.log(error.message)
+    // 抛出错误
+    return Promise.reject(error)
+  }
+)
+export default service
+```
+
+api
+
+```js
+import request from '@/utils/axios'
+import { AxiosRequestConfig } from 'axios'
+
+export const getRoleList = () => {
+    const obj:AxiosRequestConfig = {
+        url:'/user/info',
+        method:'get'
+    }
+  return request(obj)
+}
+
+export const doLogin = (data:any) => {
+    const obj:AxiosRequestConfig = {
+        url:'/user/login',
+        method:'post',
+        data
+    }
+  return request(obj)
+}
+
+```
+
+数据请求
+
+```js
+import { getRoleList } from '@/api'
+const res = await getRoleList()
+```
+
+
+
 ### 5 pinia
+
+#### 1 报错
 
 pinia被外部js引入时，报
 
@@ -665,16 +705,15 @@ router.beforeEach((to) => {
 })
 ```
 
+#### 2 取值问题
 
+##### 2.1 storeToRefs
+
+如果直接从pinia中解构数据，会丢失数据的响应式，所以使用storeToRefs可以保证解构出来的数据也是响应式的；
+
+**第一种写法**
 
 ```js
-const asidemenu=storeToRefs(useAsideMenuStore())
-
-在组件中使用asidemenu中的数据时，
-<div>{{asidemenu.currentMenu.value}}</div>
-<div>{{asidemenu.menuList.value}}</div>
-上面这个要注意的是：如果store 存储的是对象形式，先取key，再.value；而且在模板中使用也是要.value的
-
 如果是这种形式：
 const {menuList,currentMenu}=storeToRefs(useAsideMenuStore())
 在组件中使用
@@ -682,27 +721,60 @@ const {menuList,currentMenu}=storeToRefs(useAsideMenuStore())
 <div>{{menuList}}</div>
 但是这个要是在js中使用，必须要.value
 console.log(menuList.value.length)
-
-//如果store没有被storeToRefs调用，则取值时，直接.key即可；不需要.value;
+如果解构出来的数据是对象形式，则必须先.value，才能再去对象中的key:
+const {userInfor} =storeToRefs(useInforStore())
+console.log(userInfor.value.token)
 
 但是对于action的操作，是不需要storeToRefs进行调用的；只针对于state，getters;
 ```
 
+
+
+**第二种写法**(不推荐)
+
+```js
+但如果是这种写法：
+const asidemenu=storeToRefs(useAsideMenuStore())
+
+在组件中使用asidemenu中的数据时，
+<div>{{asidemenu.currentMenu.value}}</div>
+<div>{{asidemenu.menuList.value}}</div>
+<div>{{asidemenu.testPrimary}}</div> //'基础数据类型'
+
+
+这个要注意的是：如果store 存储的是对象形式，先取key，再.value,而且在模板中使用也是要.value的；如果存储的是字符串等基本类型，则模板中使用时，则不需要.value;
+但无论什么数据类型，在js中使用时，都要.value
+```
+
+
+
+#### 2.2 其他情况
+
+```js
+//如果store没有被storeToRefs调用，则取值时，直接.key即可；不需要.value;
+import {useAsideMenuStore} from '@/stores/asidemenu'
+const asidemenu=useAsideMenuStore()
+console.log(asidemenu.menuList,asidemenu.testPrimary)
+// [1,2,3],'基本类型'
+```
+
+
+
 ### mock
+
+mock是生成随机数据，拦截Ajax请求的框架；
+
+所以使用axios来调取mock模拟的路径时，拦截器也是会响应的；
+
+[具体mock的配置](https://github.com/nuysoft/Mock/wiki/Mock.mock())参考
+
+
 
 ### 6 tsconfig.json
 
 
 
-
-
-
-
-
-
-
-
-### 7 报错：
+### 7 devTools报错：
 
 1 报如下错误
 
@@ -716,15 +788,74 @@ DevTools failed to load source map: Could not load content for http://127.0.0.1:
 
 更新vue devtools后，要重新启动Google；
 
-### hx报错问题
 
-Hx中运行到App时，出现类似以下的错误，
+
+
+
+### 8 ts报错
+
+TypeScript引入js第三方包，无法找到模块“xxx.js”的声明文件 xxx隐式拥有 “any“ 类型
+
+项目使用的是ts，但在引入js时，会报错：`无法找到模块“xxx.js”的声明文件 xxx隐式拥有 “any” 类型`，而且打包时，也会报错；
+
+解决：
+
+在项目中新建一个env.d.ts文件：在文件中主动声明引入的module：
 
 ```js
-Error: ENOTEMPTY: directory not empty, rmdir 
+// 在组件中导入js报错：
+import {doLogin} from '@/api/index.js';
+
+// 在env.d.ts中声明：
+declare module '@/api/index.js'
 ```
 
-解决：删除 vite 的缓存目录，默认缓存目录在 `node_modules/.vite` 中，删除 `.vite` 文件夹即可。
+### 9 echarts
+
+[echatrs](https://echarts.apache.org/handbook/zh/basics/download)
+
+```js
+npm install echarts --save
+或者从CDN引入：
+// index.html
+ <script src="https://www.jsdelivr.com/package/npm/echarts"></script>
+
+
+// 项目中使用：
+<div id="main" style="width: 600px;height:400px;">      
+</div>
+import * as echarts from 'echarts';
+ var myChart = echarts.init(document.getElementById('main'));
+
+// 如果上面两个有报错的话，在env.d.ts中做声明：
+declare module 'echarts';
+
+// 使用
+myChart.setOption({
+    ...配置
+});
+```
+
+注意：
+
+定义容器时，要有宽高，否则会不显示的；
+
+或者也可以这样导入：
+
+在 https://www.jsdelivr.com/package/npm/echarts 选择 `dist/echarts.js`，点击并保存为 `echarts.js` 文件。
+
+然后再index.html中导入
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <!-- 引入刚刚下载的 ECharts 文件 -->
+    <script src="echarts.js"></script>
+  </head>
+</html>
+```
 
 
 
@@ -736,7 +867,17 @@ Error: ENOTEMPTY: directory not empty, rmdir
 
 
 
+####  报错
 
+报错1 
+
+```js
+Uncaught (in promise) Error: Initialize failed: invalid dom.
+```
+
+原因：由于echarts在初始化化时是需要获取dom的，所以在图表初始化的时候获取不到dom的时候就会出现这样的报错。
+
+解决：将echarts的初始化，放到onMounted钩子中，不要放到外面；
 
 
 
@@ -799,6 +940,44 @@ a/**/b: 忽略a/b, a/x/b, a/x/y/b等
 *.log: 忽略所有 .log 文件
 config.php: 忽略当前路径的 config.php 文件
 ```
+
+规则示例：
+
+```js
+在已忽略文件夹中不忽略指定文件夹：
+/libs/*
+!/libs/extend/
+
+在已忽略文件夹中不忽略指定文件
+/libs/*
+!/libs/extend/fastjson.jar
+
+只忽略libs目录，不忽略libs文件：
+libs/
+
+忽略libs文件，不忽略libs目录：
+libs
+!libs/
+
+忽略所有的.jar结尾文件：
+*.jar
+
+忽略.a或.A文件，不包含demo.a文件：
+*.[aA]
+!demo.a
+```
+
+规则语法：
+
+1. 空格不匹配任意文件，可作为分隔符，可用反斜杠转义；
+2. 以井号`#`开头的文件标识注释，可以使用反斜杠进行转义
+3. 以斜杠`/`开头表示目录；
+4. 以星号`*`通配多个字符；
+5. 以问号`?`通配单个字符；
+6. 以方括号`[]`包含单个字符的匹配列表；
+7. 以叹号`!`表示不忽略（跟踪）匹配到的文件或目录；
+
+
 
 
 
