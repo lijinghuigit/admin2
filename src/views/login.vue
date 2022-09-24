@@ -1,4 +1,6 @@
 <template>
+  <div class="container">
+    <div class="form_container">
       <a-form
       ref="formRef"
       name="custom-validation"
@@ -8,19 +10,21 @@
       v-bind="layout"
       @finish="handleFinish"
     >
-      <a-form-item has-feedback label="Name" name="name">
-        <a-input v-model:value="formState.name" type="text" autocomplete="off" />
-      </a-form-item>
-      <a-form-item has-feedback label="Password" name="pass">
-        <a-input v-model:value="formState.pass" type="password" autocomplete="off" />
-      </a-form-item>
-      <a-form-item name="remember" :wrapper-col="{ span: 14, offset: 4}">
-        <a-checkbox v-model:checked="formState.remember">Remember me</a-checkbox>
-      </a-form-item>
-      <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-        <a-button type="primary" html-type="submit">Submit</a-button>
-      </a-form-item>
-    </a-form>
+        <a-form-item has-feedback label="Name" name="name">
+          <a-input v-model:value="formState.name" type="text" autocomplete="off" />
+        </a-form-item>
+        <a-form-item has-feedback label="Password" name="pass">
+          <a-input v-model:value="formState.pass" type="password" autocomplete="off" />
+        </a-form-item>
+        <a-form-item name="remember" :wrapper-col="{ span: 14, offset: 4}">
+          <a-checkbox v-model:checked="formState.remember">Remember me</a-checkbox>
+        </a-form-item>
+        <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
+          <a-button type="primary" html-type="submit">Submit</a-button>
+        </a-form-item>
+      </a-form>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -89,6 +93,29 @@
   })
 </script>
 
-<style>
-  
+<style scoped>
+  .container{
+    height: 100%;
+    background-image:url('@/assets/images/login/login_bg1.jpg');
+    background-size: cover;
+  }
+  .form_container{
+    background-image: url('@/assets/images/login/login_form.png');
+    background-size: 100% 100%;
+    background-color: #fff;
+    position:fixed;  left:50%;  top:50%;  
+    width: 500px;
+    height: 380px;
+    margin-left: -250px;
+    margin-top: -190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ant-form{
+    width: 100%;
+  }
+  .ant-form-item{
+    justify-content: center;
+  }
 </style>
