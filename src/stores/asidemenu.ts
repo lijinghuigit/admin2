@@ -8,11 +8,13 @@
  */
 
 import { defineStore } from 'pinia'
-import {getRoleList} from '@/api/index.js'
+import {getRoleList} from '@/api/index'
 import {asyncRoutes,constantRoutes} from '@/router/index.js'
 import {recursionRouter,setSingleItem} from '@/utils/recursion-router'
+import type {roleRepData} from './types/menu'
+import type {routerInt,userData} from './types/routes'
 export const useAsideMenuStore = defineStore('Asidemenu', {
-  state: () => {
+  state: () :userData => {
     return {
         menuList: [],
         routerList:[],
@@ -22,10 +24,9 @@ export const useAsideMenuStore = defineStore('Asidemenu', {
     }
   },
   actions: {
-    async asyncGetMenu(data) {
-        console.log(data)
-        const res=await getRoleList()
-       if(res.code===1){
+    async asyncGetMenu(data:string) {
+        const res:roleRepData=await getRoleList()
+        if(res.code===1){
           // 获取到的用户权限
           const userRouter=res.data.data
           console.log(userRouter)
@@ -44,18 +45,18 @@ export const useAsideMenuStore = defineStore('Asidemenu', {
           return data 
         }
     },
-    setRouter(data){
-        // console.log(data)
-        this.routerList=data
+    setRouter(data:any){
+      this.routerList=data
     },
-    setCurrentRoute(data){
+    setCurrentRoute(data: any){
       this.currentMenu=[]
       this.currentMenu.push(data)
     },
-    setTag(data){
+    setTag(data:string){
+    
       this.tagList.push(data)
     },
-    delCurrentTag(index){
+    delCurrentTag(index:number){
       this.tagList.splice(index,1)
     }
   },

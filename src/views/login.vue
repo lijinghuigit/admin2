@@ -31,12 +31,14 @@
   import type { Rule } from 'ant-design-vue/es/form';
   import { defineComponent, reactive, ref } from 'vue';
   import type { FormInstance } from 'ant-design-vue';
-  import {doLogin} from '@/api/index.js';
+  import {doLogin} from '@/api/index';
   import { message } from 'ant-design-vue';
   import {useRouter} from 'vue-router'
-  import {useInforStore} from '@/stores/userinfor.js'
-  import {useAsideMenuStore} from '@/stores/asidemenu.js'
+  import {useInforStore} from '@/stores/userinfor'
+  import {useAsideMenuStore} from '@/stores/asidemenu'
   import { onMounted } from 'vue';
+  import type {LoginResData} from '@/types/login'
+  import { number } from 'echarts';
   interface FormState {
     pass: string;
     name: string;
@@ -78,7 +80,7 @@
   };
   const handleFinish =async (values: FormState) => {
       console.log(values, formState);
-      const res=await doLogin(values)
+      const res:LoginResData= await doLogin(values)
       message.info(res.message)
       if(res.code===1){
         localStorage.setItem('useinfor',JSON.stringify(res.data))

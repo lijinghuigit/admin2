@@ -23,7 +23,7 @@
     }
     const { matched } = router.currentRoute.value
     const openKeysList = matched.map((item) => item.name)
-    const openKeys=ref(openKeysList)
+    const openKeys=ref<any>(openKeysList)
 </script>
 <template>
     <div class="logo" />

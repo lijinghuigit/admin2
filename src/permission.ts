@@ -1,13 +1,13 @@
 import router from '@/router'
 import {useAsideMenuStore} from '@/stores/asidemenu'
-import {useInforStore} from '@/stores/userinfor.js'
+import {useInforStore} from '@/stores/userinfor'
 import { storeToRefs } from 'pinia'
 router.beforeEach(async (to,next)=>{
     const asidemenu=useAsideMenuStore()
     const {userInfor}=storeToRefs(useInforStore())
     const {menuList}=storeToRefs(useAsideMenuStore())
     // console.log(userInfor.value.token,to.path)
-    document.title=to.meta.title
+    document.title = (to.meta.title as string)
     if(to.path === '/login' || to.path === '/404'|| to.path === '/403'){
         return true
     }else{
@@ -22,7 +22,7 @@ router.beforeEach(async (to,next)=>{
                 const accessdRoutes= await asidemenu.asyncGetMenu({token:userInfor.value.token})
                 // console.log('你先吗',accessdRoutes)
                 // 动态添加路由
-                accessdRoutes.forEach((item)=>{
+                accessdRoutes.forEach((item:any)=>{
                     router.addRoute(item)
                 })
                 router.push({path:to.path})

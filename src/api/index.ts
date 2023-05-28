@@ -1,13 +1,14 @@
 import request from '@/https/axios'
-export const getRoleList=(data)=>{
+import type {loginResData} from '@/types/login'
+export const getRoleList=()=>{
     const obj={
         url:'/user/info/',
         method:'get',
-        data
     }
     return request(obj)
 }
-export const doLogin=(data)=>{
+
+export const doLogin=(data:loginResData)=>{
     const obj={
         url:'/user/login/',
         method:'post',

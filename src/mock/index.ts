@@ -2,6 +2,7 @@
 import Mock from 'mockjs' 
 import { storeToRefs } from 'pinia'
 import {useInforStore} from '@/stores/userinfor'
+import type {loginResData} from '@/types/login'
 var data = Mock.mock({
     // 属性 list 的值是一个数组，其中含有 1 到 10 个元素
     'list|1-10': [{
@@ -10,7 +11,7 @@ var data = Mock.mock({
     }]
 })
 // 三个参数。第一个路径，第二个请求方式post/get，第三个回调，返回值
-Mock.mock('/user/info/', 'get', (res) => {
+Mock.mock('/user/info/', 'get', () => {
     const infor=useInforStore()
     let permission=[] 
     const {userInfor} =storeToRefs(infor)
@@ -36,7 +37,7 @@ Mock.mock('/user/info/', 'get', (res) => {
         }
     }
 })
-Mock.mock('/user/login/', 'post', (res) => {
+Mock.mock('/user/login/', 'post', (res:loginResData|any) => {
     res=JSON.parse(res.body)
     console.log(res.name)
     let token=''

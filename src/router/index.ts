@@ -6,10 +6,11 @@
  * @FilePath: \cloudmusice:\学习记事本\vue-admin\admin2\src\router\index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory,type RouteRecordRaw,type _RouteRecordBase  } from 'vue-router'
 import Layout from '../views/Layout/Layout.vue'
 import EmptyLayout from '@/views/empty_layout/index.vue'
-export const constantRoutes=[
+import './types/index'
+export const constantRoutes:Array<RouteRecordRaw>=[
   {
     path: '/',
     name: 'Index',

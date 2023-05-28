@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { useRouter ,useRoute} from 'vue-router';
+  import { useRouter , useRoute,type RouteLocationMatched} from 'vue-router';
   import { onMounted,watch,computed } from 'vue';
   import {useAsideMenuStore} from '@/stores/asidemenu.js'
   import {storeToRefs} from 'pinia'
@@ -25,7 +25,7 @@
   const {routerList}=storeToRefs(asidemenu)
   const routeChange=()=>{ 
     const {fullPath,meta,name,path,matched} =router.currentRoute.value
-    // console.log(router.currentRoute.value,fullPath,meta,name,path,matched)
+    console.log(router.currentRoute.value,fullPath,meta,name,path,matched)
     asidemenu.setRouter(matched)
     asidemenu.setCurrentRoute(name)
   }
